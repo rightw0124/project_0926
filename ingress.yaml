@@ -1,0 +1,108 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: www.test.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 8000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+
+#정상작동 ㅇ 정규식제거 간편 << 프론트 정상적으로 데이터 주고받을 수는 있는데 콘솔에 404 에러남 data 경로가없어서
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: web-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: "nginx"
+# spec:
+#   rules:
+#   - host: www.test.com
+#     http:
+#       paths:
+#       - path: /api/download
+#         pathType: ImplementationSpecific  # 정규식을 사용하지 않으므로 Prefix로 변경 가능
+#         backend:
+#           service:
+#             name: backend-service
+#             port:
+#               number: 8000
+#       - path: /
+#         pathType: ImplementationSpecific  # Prefix로 변경 가능
+#         backend:
+#           service:
+#             name: frontend-service
+#             port:
+#               number: 80
+
+
+#정상작동 ㅇ v1
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: web-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: "nginx"  # NGINX Ingress 컨트롤러 사용
+# spec:
+#   rules:
+#   - host: www.test.com
+#     http:
+#       paths:
+#       - path: /api/download
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: backend-service
+#             port:
+#               number: 8000
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: frontend-service
+#             port:
+#               number: 80
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: web-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     kubernetes.io/ingress.class: "nginx"    # NGINX Ingress 컨트롤러 사용
+# spec:
+#   rules:
+#   - host: www.test.com
+#     http:
+#       paths:
+#       - path: /api                          # '/api' 경로는 FastAPI 백엔드로 라우팅
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: backend-service
+#             port:
+#               number: 8000
+#       - path: /                             # 그 외 모든 경로는 React 프론트엔드로 라우팅
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: frontend-service
+#             port:
+#               number: 80
